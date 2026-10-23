@@ -2,7 +2,6 @@
   const $ = (s, el = document) => el.querySelector(s);
   const $$ = (s, el = document) => [...el.querySelectorAll(s)];
   const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
-  const REFINED = true;   // the restrained style is final (the old "current" look is no longer offered)
   const poster = (k) => `assets/posters/${k}.jpg`;
   const icon = {
     arrow: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg>',
@@ -19,13 +18,13 @@
     $$("[data-year]").forEach((el) => (el.textContent = new Date().getFullYear()));
   }
 
-  /* ---------- starfield, star glints, light dust and shooting stars ---------- */
+  /* ---------- faint starfield and drifting light dust ---------- */
   function bubbles() {
     const c = $("#bubbles");
     if (!c) return;
     const ctx = c.getContext("2d");
     const onProject = document.body.classList.contains("page-project");
-    let w, h, dpr, stars = [], dust = [], glints = [], meteors = [], ripples = [], nextMeteor = 0, nextGlint = 0, nextRipple = 2000;
+    let w, h, dpr, stars = [], dust = [];
     function resize() {
       dpr = Math.min(devicePixelRatio || 1, 2);
       w = c.clientWidth; h = c.clientHeight;
@@ -37,30 +36,14 @@
         ph: Math.random() * Math.PI * 2, sp: 0.01 + Math.random() * 0.03,
         tint: Math.random() < 0.3 ? "190,215,255" : "240,240,255"
       }));
-      dust = Array.from({ length: Math.round(Math.min(REFINED ? 30 : 90, (w * h) / 16000)) }, () => makeDust(true));
+      dust = Array.from({ length: Math.round(Math.min(30, (w * h) / 16000)) }, () => makeDust(true));
     }
     function makeDust(anywhere) {
       return { x: Math.random() * w, y: anywhere ? Math.random() * h : h + 10, r: 0.6 + Math.random() * 1.6,
                vy: 0.08 + Math.random() * 0.22, vx: (Math.random() - 0.5) * 0.12, a: 0.15 + Math.random() * 0.4,
                ph: Math.random() * 10 };
     }
-    const strength = () => (REFINED ? 0.5 : 1) * (onProject ? 0.55 : Math.max(0.45, 1 - scrollY / (innerHeight * 1.6)));
-    // a four-point star glint: soft core plus two long thin rays
-    function glint(x, y, size, a) {
-      const core = ctx.createRadialGradient(x, y, 0, x, y, size * 0.5);
-      core.addColorStop(0, `rgba(255,255,255,${a})`); core.addColorStop(0.4, `rgba(200,225,255,${a * 0.35})`); core.addColorStop(1, "rgba(200,225,255,0)");
-      ctx.fillStyle = core; ctx.beginPath(); ctx.arc(x, y, size * 0.5, 0, Math.PI * 2); ctx.fill();
-      [[size, 0.9], [size * 0.55, 0.6]].forEach(([len, th], j) => {
-        const rot = j ? Math.PI / 4 : 0;
-        for (let q = 0; q < 2; q++) {
-          const ang = rot + q * Math.PI / 2;
-          const dx = Math.cos(ang) * len, dy = Math.sin(ang) * len;
-          const g = ctx.createLinearGradient(x - dx, y - dy, x + dx, y + dy);
-          g.addColorStop(0, "rgba(220,235,255,0)"); g.addColorStop(0.5, `rgba(255,255,255,${a * (j ? 0.5 : 1)})`); g.addColorStop(1, "rgba(220,235,255,0)");
-          ctx.strokeStyle = g; ctx.lineWidth = th; ctx.beginPath(); ctx.moveTo(x - dx, y - dy); ctx.lineTo(x + dx, y + dy); ctx.stroke();
-        }
-      });
-    }
+    const strength = () => 0.5 * (onProject ? 0.55 : Math.max(0.45, 1 - scrollY / (innerHeight * 1.6)));
     function tick(now = 0) {
       ctx.clearRect(0, 0, w, h);
       const k = strength();
@@ -75,39 +58,6 @@
         const g = ctx.createRadialGradient(d.x, d.y, 0, d.x, d.y, d.r * 3);
         g.addColorStop(0, `rgba(220,235,255,${d.a * k})`); g.addColorStop(1, "rgba(220,235,255,0)");
         ctx.fillStyle = g; ctx.beginPath(); ctx.arc(d.x, d.y, d.r * 3, 0, Math.PI * 2); ctx.fill();
-      });
-      if (!REFINED && !reduceMotion && now > nextGlint) {
-        nextGlint = now + 260 + Math.random() * (onProject ? 1400 : 700);
-        glints.push({ x: Math.random() * w, y: Math.random() * h, size: 6 + Math.pow(Math.random(), 2) * 26, t: 0, dur: 1600 + Math.random() * 1800 });
-      }
-      glints = glints.filter((g) => g.t < g.dur);
-      glints.forEach((g) => { g.t += 16; const p = g.t / g.dur; glint(g.x, g.y, g.size * (0.6 + 0.4 * Math.sin(p * Math.PI)), Math.sin(p * Math.PI) * 0.9 * k); });
-      if (!REFINED && !reduceMotion && now > nextRipple) {
-        nextRipple = now + (onProject ? 6000 : 2600) + Math.random() * 3000;
-        const fl = window.__bflies, b = fl && fl.length && Math.random() < 0.7 ? fl[Math.floor(Math.random() * fl.length)] : null;
-        ripples.push({ x: b ? b.x + b.lift * 0.5 + 20 : Math.random() * w, y: b ? b.y + b.lift + 20 : h * (0.3 + Math.random() * 0.7), t: 0 });
-      }
-      ripples = ripples.filter((r) => r.t < 1);
-      ripples.forEach((r) => {
-        r.t += 0.006;
-        for (let i = 0; i < 3; i++) {
-          const p = r.t - i * 0.12; if (p <= 0) continue;
-          const rad = 8 + p * 90, a = (1 - p) * 0.35 * k;
-          ctx.strokeStyle = `rgba(200,220,255,${a})`; ctx.lineWidth = 1;
-          ctx.beginPath(); ctx.ellipse(r.x, r.y, rad, rad * 0.42, 0, 0, Math.PI * 2); ctx.stroke();
-        }
-      });
-      if (!REFINED && !reduceMotion && now > nextMeteor) {
-        nextMeteor = now + (onProject ? 9000 : 4500) + Math.random() * 5000;
-        const ang = Math.PI * (0.12 + Math.random() * 0.1);
-        meteors.push({ x: w * (0.15 + Math.random() * 0.8), y: -20, vx: -Math.cos(ang) * 9, vy: Math.sin(ang) * 9, life: 1 });
-      }
-      meteors = meteors.filter((m) => m.life > 0);
-      meteors.forEach((m) => {
-        m.x += m.vx; m.y += m.vy; m.life -= 0.012;
-        const g = ctx.createLinearGradient(m.x, m.y, m.x - m.vx * 14, m.y - m.vy * 14);
-        g.addColorStop(0, `rgba(235,240,255,${0.9 * m.life * k})`); g.addColorStop(1, "rgba(143,196,240,0)");
-        ctx.strokeStyle = g; ctx.lineWidth = 1.2; ctx.beginPath(); ctx.moveTo(m.x, m.y); ctx.lineTo(m.x - m.vx * 14, m.y - m.vy * 14); ctx.stroke();
       });
       if (!reduceMotion) requestAnimationFrame(tick);
     }
@@ -167,10 +117,10 @@
       <path d="M49.4 38.5 C47.5 31 45 26 42.5 23.5 M50.6 38.5 C52.5 31 55 26 57.5 23.5" stroke="#2a3150" stroke-width=".5" fill="none"/>
       <circle cx="42.5" cy="23.5" r=".9" fill="#2a3150"/><circle cx="57.5" cy="23.5" r=".9" fill="#2a3150"/></svg>`;
 
-    const n = REFINED ? (onProject ? 1 : 2) : onProject ? 3 : (innerWidth < 760 ? 4 : 6);
+    const n = onProject ? 1 : 2;
     const flock = Array.from({ length: n }, () => {
       const depth = Math.random();
-      const g = REFINED ? "bfholo" : "bfsil";
+      const g = "bfholo";
       const size = `${38 + depth * 46}px`, f = `${0.8 + Math.random() * 0.6}s`, fd = `${-Math.random()}s`;
       const ref = document.createElement("div"), el = document.createElement("div");
       ref.className = "bfly-ref"; el.className = "bfly";
@@ -181,7 +131,6 @@
       return { el, ref, x: Math.random() * innerWidth, y: Math.random() * innerHeight, h: Math.random() * Math.PI * 2,
                v: 0.3 + depth * 0.5, ph: Math.random() * 100, turn: 0.004 + Math.random() * 0.006, lift: 16 + depth * 26 };
     });
-    window.__bflies = flock; // ripples are spawned under them by the sky canvas
     function tick(t) {
       const W = innerWidth, H = innerHeight;
       flock.forEach((b) => {
@@ -202,21 +151,10 @@
     else requestAnimationFrame(tick);
   }
 
-  function water() {
-    const svg = $(".caustics");
-    if (!svg) return;
-    const fit = () => {
-      const r = svg.getBoundingClientRect(), hgt = Math.round(1000 * r.height / Math.max(1, r.width));
-      svg.setAttribute("viewBox", `0 0 1000 ${hgt}`);
-      svg.querySelector("rect").setAttribute("height", hgt);
-    };
-    addEventListener("resize", fit); fit();
-  }
-
   /* show the nav name only after the hero (which already shows the name) scrolls away */
   function navName() {
     if (!document.body.classList.contains("page-home")) return;
-    const hero = $(REFINED ? ".orbit" : ".hero");
+    const hero = $(".orbit");
     const upd = () => {
       document.body.classList.toggle("scrolled", scrollY > hero.offsetHeight * 0.6);
       // the silver water pool belongs to the first screen: fade it out as the hero scrolls away
@@ -237,7 +175,7 @@
     const stage = $("#sp-stage"), root = $("#sp-intro"), tip = $("#sp-tip");
     let seen = false;
     try { seen = sessionStorage.getItem("intro-seen") === "1"; } catch (e) {}
-    if (!stage || !REFINED || seen) { if (root) root.remove(); if (tip) tip.remove(); done(); return; }
+    if (!stage || seen) { if (root) root.remove(); if (tip) tip.remove(); done(); return; }
     document.body.classList.add("intro-lock");
     let exiting = false, exitAt = 0, handedOff = false, strip = null;
     const handed = new Set();
@@ -431,7 +369,7 @@
   /* ---------- home: 3D carousel of the four series; unfolds from the centre when the opening ends ---------- */
   function orbit(startIdx = 0) {
     const stage = $("#orbit-stage");
-    if (!stage || !REFINED) return null;
+    if (!stage) return null;
     const root = $("#orbit"), label = $("#orbit-label"), count = $("#orbit-count");
     const order = ORBIT_ORDER.map((id) => DRAMAS.find((d) => d.id === id));
     const N = order.length;
@@ -557,7 +495,7 @@
 
   /* ---------- cinema projector beam: dust drifting through the light ---------- */
   function projector() {
-    const c = $(REFINED ? ".orbit .beam-dust" : ".hero .beam-dust");
+    const c = $(".orbit .beam-dust");
     if (!c || reduceMotion) return;
     const ctx = c.getContext("2d");
     let w, h, motes = [];
@@ -585,109 +523,12 @@
   }
 
 
-  /* ---------- WebGL fluid smoke: silky purple / blue / silver light ribbons (home hero) ---------- */
-  function smoke() {
-    const c = $(".smoke");
-    if (!c || !REFINED) return;
-    const gl = c.getContext("webgl", { premultipliedAlpha: false, antialias: false });
-    if (!gl) { c.classList.add("no-gl"); return; }
-    const vs = "attribute vec2 p;void main(){gl_Position=vec4(p,0.,1.);}";
-    const fs = `precision highp float;
-      uniform vec2 R; uniform float T;
-      float h(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}
-      float n(vec2 p){vec2 i=floor(p),f=fract(p);f=f*f*(3.-2.*f);
-        return mix(mix(h(i),h(i+vec2(1,0)),f.x),mix(h(i+vec2(0,1)),h(i+vec2(1,1)),f.x),f.y);}
-      float fbm(vec2 p){float v=0.,a=.5;mat2 m=mat2(1.6,1.2,-1.2,1.6);for(int i=0;i<5;i++){v+=a*n(p);p=m*p;a*=.5;}return v;}
-      void main(){
-        vec2 uv=gl_FragCoord.xy/R; vec2 p=(gl_FragCoord.xy-.5*R)/R.y;
-        float t=T*.05;
-        /* slow, large-scale warp of space: this is what bends the silk */
-        vec2 w=vec2(fbm(p*.7+vec2(0.,t)),fbm(p*.7+vec2(3.1,1.7)-t*.8));
-        vec2 q=p+1.4*(w-.5);
-        float flow=fbm(q*.55+vec2(t*.5,-t*.35));
-        /* long, thin strands running along the flow, plus broader soft ribbons */
-        float a=q.y*34.+q.x*7.+flow*9.;
-        float fine=pow(.5+.5*sin(a),16.);
-        float mid=pow(.5+.5*sin(a*.31+1.3),8.)*.55;
-        float wide=pow(.5+.5*sin(a*.09+2.1),3.)*.4;
-        /* where the silk lives: a drifting mass centred right of the middle */
-        vec2 c=vec2(.74+.05*sin(t*.7),.66+.06*cos(t*.5));
-        float env=smoothstep(.85,.0,length((uv-c)*vec2(1.1,1.)))*smoothstep(.15,.75,fbm(q*.9-t*.3)+.25);
-        vec3 deep=vec3(.035,.03,.07), violet=vec3(.40,.31,.80), blue=vec3(.33,.45,.92), silver=vec3(.90,.90,.98);
-        vec3 col=deep;
-        col+=violet*env*.38;
-        col+=mix(violet,blue,w.x)*wide*env;
-        col+=mix(blue,silver,.5)*mid*env*.75;
-        col+=silver*fine*env*.7;
-        col*=mix(.55,1.,smoothstep(.0,.5,uv.x));
-        gl_FragColor=vec4(col,1.);
-      }`;
-    const sh = (type, src) => { const o = gl.createShader(type); gl.shaderSource(o, src); gl.compileShader(o); return o; };
-    const pr = gl.createProgram();
-    gl.attachShader(pr, sh(gl.VERTEX_SHADER, vs)); gl.attachShader(pr, sh(gl.FRAGMENT_SHADER, fs)); gl.linkProgram(pr);
-    if (!gl.getProgramParameter(pr, gl.LINK_STATUS)) { c.classList.add("no-gl"); return; }
-    gl.useProgram(pr);
-    const b = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, b);
-    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]), gl.STATIC_DRAW);
-    const loc = gl.getAttribLocation(pr, "p"); gl.enableVertexAttribArray(loc); gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
-    const uR = gl.getUniformLocation(pr, "R"), uT = gl.getUniformLocation(pr, "T");
-    const scale = 0.75; // render below full resolution: soft, and light on the GPU
-    const resize = () => { c.width = Math.max(2, c.clientWidth * scale); c.height = Math.max(2, c.clientHeight * scale); gl.viewport(0, 0, c.width, c.height); };
-    addEventListener("resize", resize); resize();
-    let visible = true;
-    new IntersectionObserver((e) => (visible = e[0].isIntersecting)).observe(c);
-    const t0 = performance.now();
-    const frame = (now) => {
-      if (visible) { gl.uniform2f(uR, c.width, c.height); gl.uniform1f(uT, reduceMotion ? 20 : (now - t0) / 1000 + 20); gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4); }
-      if (!reduceMotion) requestAnimationFrame(frame);
-    };
-    requestAnimationFrame(frame);
-  }
-
-  /* ---------- nav: frosted bar that tightens on scroll; hero background parallax ---------- */
+  /* ---------- nav: frosted bar that tightens on scroll ---------- */
   function navAndParallax() {
-    const nav = $(".nav"), scene = $(".hero-scene");
-    const upd = () => {
-      nav.classList.toggle("compact", scrollY > 24);
-      if (scene && REFINED && !reduceMotion) scene.style.transform = `translate3d(0, ${scrollY * 0.3}px, 0)`;
-    };
+    const nav = $(".nav");
+    const upd = () => nav.classList.toggle("compact", scrollY > 24);
     addEventListener("scroll", upd, { passive: true }); upd();
   }
-
-  /* ---------- tracking HUD over the hero light form ---------- */
-  function tracker() {
-    const host = $("#tracker");
-    if (!host || reduceMotion || REFINED) return;
-    const pts = Array.from({ length: 9 }, (_, i) => ({
-      ph: Math.random() * 100, sx: 0.0003 + Math.random() * 0.0005, sy: 0.0003 + Math.random() * 0.0005,
-      box: i % 3 === 0 ? 26 + Math.random() * 60 : i % 3 === 1 ? 14 + Math.random() * 14 : 0,
-      label: i % 2 === 0, el: null
-    }));
-    host.innerHTML = `<svg class="trk-arc" viewBox="0 0 100 100" preserveAspectRatio="none"><path d="M18 22 A42 46 0 0 1 88 70" /><path d="M80 20 A40 44 0 0 1 30 92" /></svg>` +
-      pts.map(() => `<div class="trk"><i class="trk-box"></i><b class="trk-dot"></b><span class="trk-lbl"></span></div>`).join("");
-    const els = $$(".trk", host);
-    pts.forEach((p, i) => { p.el = els[i]; if (!p.box) p.el.querySelector(".trk-box").remove(); if (!p.label) p.el.querySelector(".trk-lbl").remove(); });
-    let lastLbl = 0;
-    function tick(t) {
-      const W = host.clientWidth, H = host.clientHeight;
-      const upd = t - lastLbl > 140;
-      pts.forEach((p) => {
-        const x = W * (0.5 + 0.34 * Math.sin(t * p.sx + p.ph)), y = H * (0.5 + 0.36 * Math.sin(t * p.sy + p.ph * 1.7));
-        p.el.style.transform = `translate(${x}px, ${y}px)`;
-        if (p.box) { const s = p.box * (0.8 + 0.3 * Math.sin(t * 0.001 + p.ph)); const bx = p.el.firstChild; bx.style.width = bx.style.height = `${s}px`; bx.style.margin = `${-s / 2}px`; }
-        if (p.label && upd) {
-          const lb = p.el.querySelector(".trk-lbl");
-          lb.textContent = `x: ${Math.round(x + 240)}  y: ${Math.round(y + 560)}`;
-          lb.classList.toggle("flip", x > W * 0.55); // keep labels inside the screen
-        }
-      });
-      if (upd) lastLbl = t;
-      requestAnimationFrame(tick);
-    }
-    requestAnimationFrame(tick);
-  }
-
-
 
   /* ---------- reveal on scroll ---------- */
   function reveal() {
@@ -698,48 +539,7 @@
   }
 
   /* ---------- home ---------- */
-  // wrap each word of the hero title so it can float in one by one
-  function splitTitle() {
-    const h = $(".cine-title");
-    if (!h) return;
-    let n = 0;
-    const wrap = (node) => {
-      [...node.childNodes].forEach((ch) => {
-        if (ch.nodeType === 3) {
-          const frag = document.createDocumentFragment();
-          ch.textContent.split(/(\s+)/).forEach((part) => {
-            if (!part) return;
-            if (/^\s+$/.test(part)) { frag.appendChild(document.createTextNode(" ")); return; }
-            const sp = document.createElement("span");
-            sp.className = "w"; sp.style.setProperty("--w", n++); sp.textContent = part;
-            frag.appendChild(sp);
-          });
-          ch.replaceWith(frag);
-        } else if (ch.nodeType === 1) wrap(ch);
-      });
-    };
-    wrap(h);
-    h.setAttribute("aria-label", h.textContent.replace(/\s+/g, " ").trim());
-  }
-
   function home() {
-    splitTitle();
-    const fan = $("#fan");
-    // Burn in Regret is the featured series (front, centre, largest); Dragon sits right beside it as the second pick
-    const place = {
-      reborn: { n: -1.39, r: -8, y: 30, z: 1, sc: 0.94 },
-      merman: { n: -0.49, r: -3, y: 10, z: 2, sc: 0.98 },
-      burn: { n: 0.39, r: 1, y: -12, z: 4, sc: 1.1, featured: true },
-      dragon: { n: 1.33, r: 6, y: 12, z: 3, sc: 1.02 }
-    };
-    fan.innerHTML = DRAMAS.map((d, i) => {
-      const s = place[d.id];
-      return `<a class="fan-card${s.featured ? " featured" : ""}" href="project.html?id=${d.id}" aria-label="${d.title}"
-        style="--r:${s.r}deg;--n:${s.n};--y:${s.y}px;--sc:${s.sc || 1};--d:${i * -1.6}s;--glow:${d.accent};z-index:${s.z}">
-        <img src="${poster(d.posters[0])}" alt="${d.title} poster" loading="eager">
-        <div class="tag"><span>${d.no}</span><span>${d.genre[0]}</span></div></a>`;
-    }).join("");
-
     $("#work").innerHTML = DRAMAS.map((d) => `
       <a class="work-row reveal" href="project.html?id=${d.id}">
         <span class="no">${d.no}</span>
@@ -752,10 +552,6 @@
         <span class="arrow">${icon.arrow}</span>
       </a>`).join("");
 
-    const names = SITE.platforms.map((p) => p.name);
-    $("#stream-note").innerHTML = REFINED
-      ? `<span class="sn-label">Now streaming on</span><span class="sn-logos">${SITE.platforms.map((p) => `<b class="sn-${p.name.toLowerCase()}">${p.name}</b>`).join("")}</span>`
-      : `<span class="dot"></span>All four series are streaming on ${names.slice(0, -1).join(", ")} and ${names.slice(-1)} — search by title.`;
     $("#about-text").innerHTML = SITE.about.map((p) => `<p>${p}</p>`).join("");
     $("#role").textContent = SITE.role;
     $("#roles").innerHTML = SITE.roles.map((r, i) => `<li>${r}<span>0${i + 1}</span></li>`).join("");
@@ -1109,12 +905,10 @@
     chrome();
     bubbles();
     butterflies();
-    water();
     navName();
-    tracker();
     projector();
     navAndParallax();
-    if ($("#fan")) home();
+    if ($("#work")) home();
     const startIdx = Math.floor(Math.random() * ORBIT_ORDER.length);   // land on a different series each visit
     const startCarousel = orbit(startIdx);
     spiralIntro((handoff) => startCarousel && startCarousel(handoff), startIdx);

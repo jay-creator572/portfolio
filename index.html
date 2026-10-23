@@ -5,26 +5,12 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,wght@0,400;0,500;1,400&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Inter:wght@300;400;500&family=Montserrat:wght@400;500&family=Plus+Jakarta+Sans:wght@300;400;600;700;800&display=swap">
-<link rel="stylesheet" href="assets/site.css?v=1023g">
+<link rel="stylesheet" href="assets/site.css?v=1023i">
 <title>Short Drama Portfolio</title>
 <meta name="description" content="AI short drama portfolio — four vertical series: key art, trailers, character and world design.">
 </head>
 <body class="page-home">
 <div class="atmosphere" aria-hidden="true">
-  <div class="aurora"></div>
-  <div class="beams"><i></i><i></i><i></i></div>
-  <div class="sheen"></div>
-  <svg class="caustics" preserveAspectRatio="xMidYMid slice" viewBox="0 0 1000 300">
-    <filter id="caustic-f" x="0" y="0" width="100%" height="100%">
-      <feTurbulence type="fractalNoise" baseFrequency="0.006 0.018" numOctaves="2" seed="7" result="n">
-        <animate attributeName="baseFrequency" dur="24s" values="0.006 0.018;0.008 0.015;0.006 0.018" repeatCount="indefinite"/>
-      </feTurbulence>
-      <feColorMatrix type="matrix" values="0 0 0 0 0.86  0 0 0 0 0.92  0 0 0 0 1  0 0 0 1 0"/>
-      <feComponentTransfer><feFuncA type="table" tableValues="0 0 0 0 0 0.1 1 0.1 0 0 0 0 0"/></feComponentTransfer>
-      <feGaussianBlur stdDeviation="0.6"/>
-    </filter>
-    <rect width="1000" height="300" filter="url(#caustic-f)"/>
-  </svg>
   <canvas id="bubbles"></canvas>
   <div class="butterflies" id="butterflies"></div>
   <div class="vignette"></div>
@@ -70,33 +56,6 @@
     </div>
   </div>
 </div>
-<header class="hero">
-  <div class="tracker-layer" aria-hidden="true"><div class="tracker" id="tracker"></div></div>
-  <div class="hero-scene" aria-hidden="true">
-    <div class="cinema" aria-hidden="true"><div class="screen"></div><div class="seats"></div></div>
-    <div class="projector"><div class="beam-wrap"><div class="beam"></div></div><canvas class="beam-dust"></canvas></div>
-    <div class="beam-hit"></div>
-    <div class="aura"><i></i><i></i><i></i></div>
-    <div class="geo" aria-hidden="true">
-      <i class="pg semi"></i><i class="pg bar k1"></i><i class="pg bar k2"></i><i class="pg bar k3"></i><i class="pg slant"></i><i class="pg slab"></i><span class="pg-vtext">Short Drama Portfolio — 2026</span>
-    </div>
-    <div class="cross" style="left:6%;top:24%"></div><div class="cross" style="left:50%;top:14%"></div>
-    <div class="cross" style="left:94%;top:24%"></div><div class="cross" style="left:6%;top:86%"></div>
-    <div class="cross" style="left:50%;top:86%"></div><div class="cross" style="left:94%;top:86%"></div>
-    <div class="hud hud-br">51.5072° N · 0.1276° W<br>Signal <span class="blink">●</span> Live</div>
-  </div>
-  <div>
-    <div class="credit intro" style="--i:0">
-      <span class="credit-rule"></span>
-      <div><div class="hero-name shimmer-text" data-name></div><div class="credit-sub">AI Short Drama Portfolio</div></div>
-    </div>
-    <h1 class="cine-title"><span class="t-line">Welcome to my</span><span class="t-line t-italic">short drama</span><span class="t-line">portfolio.</span></h1>
-    <p class="lede intro" style="--i:6">Four vertical series written, designed, generated and edited with AI — from first storyboard to final trailer.</p>
-    <div class="meta intro" style="--i:7"><span class="chip">4 Series</span><span class="chip">Trailers</span><span class="chip">Character &amp; World Design</span><span class="chip">Original Score</span></div>
-    <p class="stream-note intro" style="--i:8" id="stream-note"></p>
-  </div>
-  <div class="fan intro intro-fan" style="--i:3" id="fan"></div>
-</header>
 
 <section id="series">
   <div class="section-head reveal">
@@ -129,7 +88,7 @@
   </div>
 </section>
 <footer><span>© <span data-year></span> <span data-name></span></span><span>AI Short Drama Portfolio</span></footer>
-<script src="assets/data.js?v=1023g"></script>
-<script src="assets/site.js?v=1023g"></script>
+<script src="assets/data.js?v=1023i"></script>
+<script src="assets/site.js?v=1023i"></script>
 </body>
 </html>
