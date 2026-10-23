@@ -228,9 +228,10 @@
     const scenes = ["dragon-keep", "aurora-valley", "celebration-hall", "ice-battlefield", "arena", "sacred-nest-hall", "hidden-cave"]
       .map((k) => ({ id: "burn", src: `assets/scenes/${k}.jpg`, kind: "scene" }));
     const items = [];
+    const narrow = innerWidth < 760;                     // phones: posters only, so the helix isn't crowded
     for (let r = 0; items.length < 18 && r < 8; r++) {
       lanes.forEach((l) => { if (l[r]) items.push(l[r]); });
-      if (scenes[r]) items.push(scenes[r]);
+      if (scenes[r] && !narrow) items.push(scenes[r]);
     }
     const N = items.length;
     stage.innerHTML = items.map((it, i) => `
@@ -280,7 +281,8 @@
       }
       if (!dragging && !exiting) { vel *= 0.94; rot += (hovered < 0 && !reduceMotion ? 0.11 : 0) + vel; }
       const W = stage.clientWidth, H = stage.clientHeight;
-      const R = Math.min(W * 0.3, 420), step = 360 / 7.2, dy = Math.min(H * 0.062, 50);
+      const R = narrow ? W * 0.3 : Math.min(W * 0.3, 420), step = 360 / 7.2, dy = narrow ? H / (N + 4) : Math.min(H * 0.062, 50);
+      const m = narrow ? 0.8 : 1;                          // smaller frames on phones
       // strip positions, in the helix stage's own (tilted) coordinates
       const sr = stage.getBoundingClientRect(), scx = sr.left + sr.width / 2, scy = sr.top + sr.height / 2;
       const A = (22 * Math.PI) / 180, sy0 = exiting ? stripY() - scy : 0;
@@ -293,7 +295,7 @@
         const face = Math.cos(th);                                   // 1 = facing us, -1 = far side
         const isHover = i === hovered;
         let x = sx, y = sy, z = sz, ry = Math.sin(th) * 38, rz = 0;  // cards stay readable: never turn past side-on
-        let sc = lerp(0.3, 0.6 + face * 0.18, ki) * (isHover ? 1.1 : 1);
+        let sc = lerp(0.3, 0.6 + face * 0.18, ki) * m * (isHover ? 1.1 : 1);
         let op = ki * (isHover ? 1 : 0.35 + 0.65 * (face * 0.5 + 0.5)), br = isHover ? 1.08 : 0.45 + 0.55 * (face * 0.5 + 0.5), bl = Math.max(0, -face) * 2.2;
         if (exiting) {
           if (strip.slot[i] === undefined) {                         // scene stills just fade where they are

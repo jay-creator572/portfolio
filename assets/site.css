@@ -880,7 +880,7 @@ body.v-refined.page-home {
 
 .sp-stage {
   position: absolute; left: 30%; right: 0; top: 12%; bottom: 6%; z-index: 3; perspective: 1700px;
-  cursor: grab; touch-action: pan-y; transform-style: preserve-3d;
+  cursor: grab; touch-action: pan-y; transform-style: flat;   /* flat: cards stack by depth instead of slicing through each other */
 }
 .sp-stage.grabbing { cursor: grabbing; }
 .sp-stage::before { content: ""; position: absolute; inset: 0; transform: rotateZ(-24deg) rotateX(8deg); pointer-events: none; }
@@ -990,3 +990,9 @@ body.intro-lock { overflow: hidden; }
 
 /* phones: lift the pedestal label clear of the bottom arrows */
 @media (max-width: 760px) { .orbit-pedestal { bottom: 12%; } }
+/* phones: the helix gets the full width, above the title */
+@media (max-width: 760px) {
+  .sp-intro .sp-stage { left: 0; right: 0; top: 5%; bottom: 40%; }
+  .sp-intro .sp-corner { right: var(--gutter); bottom: 104px; }          /* title sits above the button, never under it */
+  .sp-intro .sp-enter { left: var(--gutter); right: var(--gutter); bottom: 32px; justify-content: center; }
+}
