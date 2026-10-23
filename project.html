@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,wght@0,400;0,500;1,400&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Inter:wght@300;400;500&family=Pinyon+Script&display=swap">
+<link rel="stylesheet" href="assets/site.css?v=1023g">
+<title>Short Drama Project</title>
+</head>
+<body class="page-project">
+<div class="atmosphere" aria-hidden="true">
+  <div class="aurora"></div>
+  <div class="beams"><i></i><i></i><i></i></div>
+  <div class="sheen"></div>
+  <svg class="caustics" preserveAspectRatio="xMidYMid slice" viewBox="0 0 1000 300">
+    <filter id="caustic-f" x="0" y="0" width="100%" height="100%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.006 0.018" numOctaves="2" seed="7" result="n">
+        <animate attributeName="baseFrequency" dur="24s" values="0.006 0.018;0.008 0.015;0.006 0.018" repeatCount="indefinite"/>
+      </feTurbulence>
+      <feColorMatrix type="matrix" values="0 0 0 0 0.86  0 0 0 0 0.92  0 0 0 0 1  0 0 0 1 0"/>
+      <feComponentTransfer><feFuncA type="table" tableValues="0 0 0 0 0 0.1 1 0.1 0 0 0 0 0"/></feComponentTransfer>
+      <feGaussianBlur stdDeviation="0.6"/>
+    </filter>
+    <rect width="1000" height="300" filter="url(#caustic-f)"/>
+  </svg>
+  <canvas id="bubbles"></canvas>
+  <div class="butterflies" id="butterflies"></div>
+  <div class="vignette"></div>
+</div>
+<div class="grain"></div>
+<nav class="nav">
+  <a class="brand shimmer-text" href="index.html" data-name></a>
+  <ul><li><a href="index.html#series">Work</a></li><li><a href="index.html#about">About</a></li><li><a href="index.html#contact">Contact</a></li></ul>
+</nav>
+<main id="project"></main>
+<footer><span>© <span data-year></span> <span data-name></span></span><span>AI Short Drama Portfolio</span></footer>
+<script src="assets/data.js?v=1023g"></script>
+<script src="assets/site.js?v=1023g"></script>
+</body>
+</html>

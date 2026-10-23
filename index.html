@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,wght@0,400;0,500;1,400&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Inter:wght@300;400;500&family=Montserrat:wght@400;500&family=Plus+Jakarta+Sans:wght@300;400;600;700;800&display=swap">
+<link rel="stylesheet" href="assets/site.css?v=1023g">
+<title>Short Drama Portfolio</title>
+<meta name="description" content="AI short drama portfolio — four vertical series: key art, trailers, character and world design.">
+</head>
+<body class="page-home">
+<div class="atmosphere" aria-hidden="true">
+  <div class="aurora"></div>
+  <div class="beams"><i></i><i></i><i></i></div>
+  <div class="sheen"></div>
+  <svg class="caustics" preserveAspectRatio="xMidYMid slice" viewBox="0 0 1000 300">
+    <filter id="caustic-f" x="0" y="0" width="100%" height="100%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.006 0.018" numOctaves="2" seed="7" result="n">
+        <animate attributeName="baseFrequency" dur="24s" values="0.006 0.018;0.008 0.015;0.006 0.018" repeatCount="indefinite"/>
+      </feTurbulence>
+      <feColorMatrix type="matrix" values="0 0 0 0 0.86  0 0 0 0 0.92  0 0 0 0 1  0 0 0 1 0"/>
+      <feComponentTransfer><feFuncA type="table" tableValues="0 0 0 0 0 0.1 1 0.1 0 0 0 0 0"/></feComponentTransfer>
+      <feGaussianBlur stdDeviation="0.6"/>
+    </filter>
+    <rect width="1000" height="300" filter="url(#caustic-f)"/>
+  </svg>
+  <canvas id="bubbles"></canvas>
+  <div class="butterflies" id="butterflies"></div>
+  <div class="vignette"></div>
+</div>
+<div class="grain"></div>
+<nav class="nav">
+  <a class="brand shimmer-text" href="index.html" data-name></a>
+  <ul><li><a href="index.html#series">Work</a></li><li><a href="index.html#about">About</a></li><li><a href="index.html#contact">Contact</a></li></ul>
+</nav>
+<header class="orbit" id="orbit" aria-label="Featured series">
+  <div class="orbit-bg"></div>
+  <div class="orbit-word" aria-hidden="true"><span>Short Drama</span><span>Portfolio</span></div>
+  <div class="orbit-beam" aria-hidden="true"><div class="beam-wrap"><div class="beam"></div></div><canvas class="beam-dust"></canvas></div>
+  <div class="orbit-intro">
+    <button class="o-back" id="orbit-back" aria-label="Back to the opening"><span>&larr;</span><em>Opening</em></button>
+    <div class="o-name">Jasmine Gao</div>
+    <p class="o-welcome">Welcome to my short drama portfolio.</p>
+  </div>
+  <div class="orbit-stage" id="orbit-stage" tabindex="0" aria-label="Series carousel. Drag, scroll or use arrow keys."></div>
+  <div class="orbit-pedestal"><div class="pedestal-disc"></div>
+    <a class="pedestal-label" id="orbit-label" href="#"></a>
+  </div>
+  <div class="orbit-foot">
+    <div class="o-hint">Drag to explore</div>
+    <div class="o-ctrl"><button id="orbit-prev" aria-label="Previous series">&larr;</button><span id="orbit-count">01 / 04</span><button id="orbit-next" aria-label="Next series">&rarr;</button></div>
+  </div>
+</header>
+<div class="orbit spiral sp-intro" id="sp-intro" aria-label="Opening">
+  <div class="sp-bg"></div>
+  <div class="orbit-beam" aria-hidden="true"><div class="beam-wrap"><div class="beam"></div></div><canvas class="beam-dust"></canvas></div>
+  <div class="sp-stage" id="sp-stage"></div>
+  <div class="sp-tip" id="sp-tip"></div>
+  <button class="sp-enter" id="sp-enter">Enter <span>&rarr;</span></button>
+  <div class="sp-corner">
+    <a class="sp-badge" href="#series" aria-label="Jump to all series">
+      <svg viewBox="0 0 120 120" aria-hidden="true"><defs><path id="sp-ring" d="M60,60 m-47,0 a47,47 0 1,1 94,0 a47,47 0 1,1 -94,0"/></defs>
+        <text><textPath href="#sp-ring" textLength="292" lengthAdjust="spacingAndGlyphs">JASMINE GAO • SHORT DRAMA • 2026 • </textPath></text></svg>
+      <span class="sp-badge-img" id="sp-badge-img"></span>
+    </a>
+    <div class="sp-title">
+      <div class="sp-kicker">Jasmine Gao — AI Short Drama Portfolio</div>
+      <h1 class="sp-h1">Welcome to my short drama portfolio.</h1>
+    </div>
+  </div>
+</div>
+<header class="hero">
+  <div class="tracker-layer" aria-hidden="true"><div class="tracker" id="tracker"></div></div>
+  <div class="hero-scene" aria-hidden="true">
+    <div class="cinema" aria-hidden="true"><div class="screen"></div><div class="seats"></div></div>
+    <div class="projector"><div class="beam-wrap"><div class="beam"></div></div><canvas class="beam-dust"></canvas></div>
+    <div class="beam-hit"></div>
+    <div class="aura"><i></i><i></i><i></i></div>
+    <div class="geo" aria-hidden="true">
+      <i class="pg semi"></i><i class="pg bar k1"></i><i class="pg bar k2"></i><i class="pg bar k3"></i><i class="pg slant"></i><i class="pg slab"></i><span class="pg-vtext">Short Drama Portfolio — 2026</span>
+    </div>
+    <div class="cross" style="left:6%;top:24%"></div><div class="cross" style="left:50%;top:14%"></div>
+    <div class="cross" style="left:94%;top:24%"></div><div class="cross" style="left:6%;top:86%"></div>
+    <div class="cross" style="left:50%;top:86%"></div><div class="cross" style="left:94%;top:86%"></div>
+    <div class="hud hud-br">51.5072° N · 0.1276° W<br>Signal <span class="blink">●</span> Live</div>
+  </div>
+  <div>
+    <div class="credit intro" style="--i:0">
+      <span class="credit-rule"></span>
+      <div><div class="hero-name shimmer-text" data-name></div><div class="credit-sub">AI Short Drama Portfolio</div></div>
+    </div>
+    <h1 class="cine-title"><span class="t-line">Welcome to my</span><span class="t-line t-italic">short drama</span><span class="t-line">portfolio.</span></h1>
+    <p class="lede intro" style="--i:6">Four vertical series written, designed, generated and edited with AI — from first storyboard to final trailer.</p>
+    <div class="meta intro" style="--i:7"><span class="chip">4 Series</span><span class="chip">Trailers</span><span class="chip">Character &amp; World Design</span><span class="chip">Original Score</span></div>
+    <p class="stream-note intro" style="--i:8" id="stream-note"></p>
+  </div>
+  <div class="fan intro intro-fan" style="--i:3" id="fan"></div>
+</header>
+
+<section id="series">
+  <div class="section-head reveal">
+    <div><div class="eyebrow">Selected Work</div><h2>The Series</h2></div>
+    <p>Select a series to view its key art, trailer, story and production assets.</p>
+  </div>
+  <div class="work-list" id="work"></div>
+</section>
+
+<section id="about">
+  <div class="about">
+    <div class="reveal">
+      <div class="eyebrow">About</div>
+      <h2 class="title shimmer-text" data-name></h2>
+      <p id="role" style="font-family:var(--serif);font-style:italic;font-size:1.4rem;color:#c9c0ec;margin:10px 0 26px"></p>
+      <div id="about-text"></div>
+    </div>
+    <div class="reveal">
+      <div class="eyebrow" style="margin-bottom:18px">What I Do</div>
+      <ul class="role-list" id="roles"></ul>
+    </div>
+  </div>
+</section>
+
+<section id="contact" class="contact">
+  <div class="reveal">
+    <div class="eyebrow">Contact</div>
+    <h2>Let’s make something<br><em>cinematic</em>.</h2>
+    <div class="links" id="contact-links"></div>
+  </div>
+</section>
+<footer><span>© <span data-year></span> <span data-name></span></span><span>AI Short Drama Portfolio</span></footer>
+<script src="assets/data.js?v=1023g"></script>
+<script src="assets/site.js?v=1023g"></script>
+</body>
+</html>
